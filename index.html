@@ -1,0 +1,33 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<script src="https://cdn.vapi.ai/widget.js"></script>
+<script>
+const uid = new URLSearchParams(location.search).get('uid') || 'anon';
+
+const vapi = Vapi.createWidget({
+  apiKey:      'pk_live_xxxxx',      // ключ из шага 3
+  assistantId: 'asst_xxxxx',        // ID ассистента
+  user:        { externalId: uid }, // передаём Telegram-ID
+  theme:       { primary: '#3D6EF7' }
+});
+
+/* ── напоминание на 9-й минуте ─────────────────────────── */
+vapi.on('call-start', () => {
+  setTimeout(() => {
+    vapi.playText(
+      'Осталась одна минута. Скажите «Продлить», чтобы говорить ещё десять.'
+    );
+  }, 9 * 60 * 1000);                // 540 000 мс
+});
+
+/* ── слушаем расшифровку и продлеваем звонок ───────────── */
+vapi.on('transcript', ev => {
+  if (/продл(и|ить)/i.test(ev.text)) {
+    fetch(vapi.controlUrl, {        // Call Control API
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'extend-duration', seconds: 600 })
+    });
+    vapi.playText('Продолжаем. Время продлено ещё на десять минут.');
+  }
+});
+</script></html>
