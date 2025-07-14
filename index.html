@@ -9,38 +9,7 @@
       body{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;margin:0;background:#f6f7fb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif}
       #callBtn{background:var(--brand);color:#fff;border:none;border-radius:9999px;padding:1rem 2.5rem;font-size:1.25rem;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:background .2s,transform .2s}
       #callBtn:hover{background:#345be0}
-      #callBtn:active{transform:scale(.97)}
-      vapi-widget{width:100%;max-width:500px;height:680px;display:none;margin-top:1.5rem;border-radius:12px;overflow:hidden}
-    </style>
-  </head>
-  <body>
-    <button id="callBtn">📞 Позвонить консультанту</button>
-
-    <!--   Официальный web‑widget Vapi   -->
-    <vapi-widget
-        assistant-id="e9adcabc-de09-4b16-a09d-4a4a4b89d678"
-        public-key="e4cb8bfb-3854-4577-a237-e4c5fc41dba1"
-        mode="voice"
-        style="--vapi-primary:#3d6ef7"
-    ></vapi-widget>
-
-    <!--  Скрипт web-widget из официальной инструкции  -->
-    <script src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js" async type="text/javascript"></script>
-
-    <script>
-      window.addEventListener('load',()=>{
-        const btn=document.getElementById('callBtn');
-        const widget=document.querySelector('vapi-widget');
-
-        // когда скрипт инициализирует компонент, прилетает событие ready
-        widget.addEventListener('vapi-ready',()=>{
-          btn.addEventListener('click',()=>{
-            btn.style.display='none';
-            widget.style.display='block';
-            widget.startCall();
-          });
-        });
-      });
-    </script>
-  </body>
-</html>
+...
+    }
+  ]
+}
