@@ -2,75 +2,61 @@
 <html lang="ru">
   <head>
     <meta charset="utf-8" />
-    <title>VBANQ — голосовой консультант</title>
+    <title>VBANQ — голосовой звонок</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      :root { --brand: #3D6EF7; }
       body {
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
+        height: 100vh;
         margin: 0;
         background: #f6f7fb;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
       }
-      button {
-        font-size: 1.25rem;
-        line-height: 1;
-        padding: 1rem 2.5rem;
+      #callBtn {
+        background: #3d6ef7;
+        color: #fff;
         border: none;
         border-radius: 9999px;
-        background: var(--brand);
-        color: #fff;
+        padding: 1rem 2.5rem;
+        font-size: 1.25rem;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(61, 110, 247, 0.3);
-        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(0,0,0,.1);
+        transition: background .2s, transform .2s;
       }
-      button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 18px rgba(61, 110, 247, 0.35);
-      }
-      button:active {
-        transform: none;
-        box-shadow: 0 4px 12px rgba(61, 110, 247, 0.3);
-      }
-      #error {
-        display: none;
-        margin-top: 1rem;
-        color: #d00;
-        font-size: 0.9rem;
-        text-align: center;
-      }
+      #callBtn:hover { background:#345be0; }
+      #callBtn:active { transform: scale(.98); }
+      #widget-wrapper{display:none;width:100%;max-width:500px}
     </style>
-    <!-- Загрузка Vapi SDK -->
-    <script src="https://cdn.vapi.ai/widget.js"></script>
+    <!-- Vapi embed script -->
+    <script src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js" defer></script>
   </head>
   <body>
-    <div>
-      <button id="callBtn">📞 Позвонить консультанту</button>
-      <div id="error">Не удалось загрузить голосовой модуль. Попробуйте обновить страницу.</div>
+    <button id="callBtn">📞 Ваш консультант VBANQ</button>
+
+    <div id="widget-wrapper">
+      <vapi-widget id="vapiWidget"
+        assistant-id="e9adcabc-de09-4b16-a09d-4a4a4b89d678"
+        public-key="e4cb8bfb-3854-4577-a237-e4c5fc41dba1">
+      </vapi-widget>
     </div>
 
     <script>
-      // Дожидаемся полной загрузки страницы и SDK
       window.addEventListener('load', () => {
-        // Проверяем, доступен ли глобальный объект Vapi
-        if (!window.Vapi) {
-          document.getElementById('error').style.display = 'block';
-          return;
-        }
+        const btn     = document.getElementById('callBtn');
+        const wrapper = document.getElementById('widget-wrapper');
+        const widget  = document.getElementById('vapiWidget');
 
-        // TODO: замените ключи на действительные из вашего кабинета Vapi
-        const vapi = Vapi.createWidget({
-          apiKey:      'e4cb8bfb-3854-4577-a237-e4c5fc41dba1',   // публичный ключ
-          assistantId: 'e9adcabc-de09-4b16-a09d-4a4a4b89d678',      // ID ассистента
-          autoStart:   false,                  // начнём вызов вручную
-          theme:       { primary: '#3D6EF7' }
-        });
+        btn.addEventListener('click', () => {
+          // Скрываем кнопку и показываем виджет
+          btn.style.display = 'none';
+          wrapper.style.display = 'block';
 
-        document.getElementById('callBtn').addEventListener('click', () => {
-          vapi.startCall();
+          const start = () => widget.startCall && widget.startCall();
+          // Если скрипт уже отработал — запускаем сразу, иначе ждём готовности
+          if (widget.startCall) start();
+          else widget.addEventListener('ready', start);
         });
       });
     </script>
