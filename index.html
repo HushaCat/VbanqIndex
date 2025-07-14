@@ -29,34 +29,37 @@
       #callBtn:active { transform: scale(.98); }
       #widget-wrapper{display:none;width:100%;max-width:500px}
     </style>
-    <!-- Vapi embed script -->
-    <script src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js" defer></script>
+    <!-- Vapi voice widget -->
+    <script src="https://cdn.jsdelivr.net/npm/@vapi-ai/web-widget@latest/dist/index.umd.js" async></script>
   </head>
   <body>
-    <button id="callBtn">📞 Ваш консультант VBANQ</button>
+    <button id="callBtn">📞 Позвонить консультанту</button>
 
     <div id="widget-wrapper">
       <vapi-widget id="vapiWidget"
         assistant-id="e9adcabc-de09-4b16-a09d-4a4a4b89d678"
-        public-key="e4cb8bfb-3854-4577-a237-e4c5fc41dba1">
-      </vapi-widget>
+        public-key="e4cb8bfb-3854-4577-a237-e4c5fc41dba1"
+        mode="voice"
+        auto-start="false"
+        style="width:100%;max-width:500px"></vapi-widget>
     </div>
 
     <script>
-      window.addEventListener('load', () => {
+      window.addEventListener('DOMContentLoaded', () => {
         const btn     = document.getElementById('callBtn');
         const wrapper = document.getElementById('widget-wrapper');
         const widget  = document.getElementById('vapiWidget');
 
+        const start = () => typeof widget.startCall === 'function' && widget.startCall();
+
         btn.addEventListener('click', () => {
-          // Скрываем кнопку и показываем виджет
           btn.style.display = 'none';
           wrapper.style.display = 'block';
 
-          const start = () => widget.startCall && widget.startCall();
-          // Если скрипт уже отработал — запускаем сразу, иначе ждём готовности
+          // Если библиотека уже подгрузилась, запустим звонок сразу;
+          // иначе дождёмся готовности виджета
           if (widget.startCall) start();
-          else widget.addEventListener('ready', start);
+          else widget.addEventListener('ready', start, { once: true });
         });
       });
     </script>
