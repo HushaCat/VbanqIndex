@@ -1,33 +1,78 @@
-<!doctype html><html lang="ru"><meta charset="utf-8">
-<script src="https://cdn.vapi.ai/widget.js"></script>
-<script>
-const uid = new URLSearchParams(location.search).get('uid') || 'anon';
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>VBANQ — голосовой консультант</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root { --brand: #3D6EF7; }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #f6f7fb;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      button {
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 9999px;
+        background: var(--brand);
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(61, 110, 247, 0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(61, 110, 247, 0.35);
+      }
+      button:active {
+        transform: none;
+        box-shadow: 0 4px 12px rgba(61, 110, 247, 0.3);
+      }
+      #error {
+        display: none;
+        margin-top: 1rem;
+        color: #d00;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+    </style>
+    <!-- Загрузка Vapi SDK -->
+    <script src="https://cdn.vapi.ai/widget.js"></script>
+  </head>
+  <body>
+    <div>
+      <button id="callBtn">📞 Позвонить консультанту</button>
+      <div id="error">Не удалось загрузить голосовой модуль. Попробуйте обновить страницу.</div>
+    </div>
 
-const vapi = Vapi.createWidget({
-  apiKey:      'pk_live_xxxxx',      // ключ из шага 3
-  assistantId: 'asst_xxxxx',        // ID ассистента
-  user:        { externalId: uid }, // передаём Telegram-ID
-  theme:       { primary: '#3D6EF7' }
-});
+    <script>
+      // Дожидаемся полной загрузки страницы и SDK
+      window.addEventListener('load', () => {
+        // Проверяем, доступен ли глобальный объект Vapi
+        if (!window.Vapi) {
+          document.getElementById('error').style.display = 'block';
+          return;
+        }
 
-/* ── напоминание на 9-й минуте ─────────────────────────── */
-vapi.on('call-start', () => {
-  setTimeout(() => {
-    vapi.playText(
-      'Осталась одна минута. Скажите «Продлить», чтобы говорить ещё десять.'
-    );
-  }, 9 * 60 * 1000);                // 540 000 мс
-});
+        // TODO: замените ключи на действительные из вашего кабинета Vapi
+        const vapi = Vapi.createWidget({
+          apiKey:      e4cb8bfb-3854-4577-a237-e4c5fc41dba1,   // публичный ключ
+          assistantId: e9adcabc-de09-4b16-a09d-4a4a4b89d678,      // ID ассистента
+          autoStart:   false,                  // начнём вызов вручную
+          theme:       { primary: '#3D6EF7' }
+        });
 
-/* ── слушаем расшифровку и продлеваем звонок ───────────── */
-vapi.on('transcript', ev => {
-  if (/продл(и|ить)/i.test(ev.text)) {
-    fetch(vapi.controlUrl, {        // Call Control API
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'extend-duration', seconds: 600 })
-    });
-    vapi.playText('Продолжаем. Время продлено ещё на десять минут.');
-  }
-});
-</script></html>
+        document.getElementById('callBtn').addEventListener('click', () => {
+          vapi.startCall();
+        });
+      });
+    </script>
+  </body>
+</html>
