@@ -24,20 +24,6 @@
   type="text/javascript"
 ></script>
 
-
-    </div>
-
-    <script>
-      // ждём, пока UMD подключит custom-element <vapi-widget>
-      window.addEventListener('DOMContentLoaded', () => {
-        const btn   = document.getElementById('callBtn');
-        const widget= document.getElementById('vapi');
-        btn.addEventListener('click',()=>{
-          btn.style.display='none';          // прячем кнопку
-          widget.style.display='block';      // показываем виджет
-          // виджет сам сразу запустит голос (mode="voice")
-        });
-      });
-    </script>
+    
   </body>
 </html>
